@@ -1,7 +1,10 @@
+@import url('https://fonts.cdnfonts.com/css/depixel');
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'DePixel', sans-serif;
 }
 
 body {
@@ -9,14 +12,40 @@ body {
     place-items: center;
 }
 
-.container {
+h1 {
+    margin-top: 7rem;
+    margin-bottom: 1rem;
+}
+
+#container {
     height: 40rem;
     width: 40rem;
+    box-shadow: -3px 0 0 0 black,
+                3px 0 0 0 black,
+                0 -3px 0 0 black,
+                0 3px 0 0 black;
+}
+
+.form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid black;
+}
+
+form > div {
+    margin: 3rem;
+}
+
+form > div > button {
+    padding: 0.3rem;
+}
+.board {
     display: grid;
     grid-template: repeat(3, 1fr) / repeat(3, 1fr);
 }
 
-.container > div {
+.board > div {
     border: 2px solid black;
     font-size: 10rem;
     
@@ -24,4 +53,3 @@ body {
     align-items: center;
     justify-content: center;
 };
-

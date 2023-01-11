@@ -1,4 +1,40 @@
+const menu = (() => {
+    const computerCheckbox = document.getElementById('computer');
+    const player2Input = document.getElementById('player2');
+
+    const x1 = document.getElementById('x1')
+    const o1 = document.getElementById('o1');
+    const x2 = document.getElementById('x2');
+    const o2 = document.getElementById('o2');
+
+
+    computerCheckbox.addEventListener('change', () => {
+        player2Input.disabled = computerCheckbox.checked;
+        player2Input.innerHTML = "";
+        if (computerCheckbox.checked) {
+            player2Input.value = "";
+        }
+    })
+
+    x1.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            o2.checked = true;
+        }
+    })
+
+    o1.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            x2.checked = true;
+        }
+    })
+    
+})();
+
 const displayController = (() => {
+    
+    const container = document.getElementById('container');
+
+    let _gameState = 'menu';
     
     const p1 = 'X'
     const p2 = 'O'
@@ -15,13 +51,26 @@ const displayController = (() => {
 
 })();
 
-const gameBoard = (() => {
+const gameBoard = () => {
 
     const _gameBoard = new Array(9).fill("");
-    const tiles = document.querySelectorAll('.container > div');
+    const container = document.getElementById('container')
 
-    // Returns True if the tile hasn't been used
+    //Draws the initial board
+    const createBoard = (() => {
+        container.className = 'board';
+        for (let i = 0; i < _gameBoard.length; i++) {
+            const tile = document.createElement('div');
+            tile.className = 'tile';
+            container.appendChild(tile);
+        }
+    })();
+
+    const tiles = document.querySelectorAll('.tile');
+
+    // Returns true if the tile hasn't been used
     const isAvailable = (index) => { return (_gameBoard[index] === "") }
+
 
     // Draws the board when called
     const drawBoard = () => {
@@ -37,6 +86,8 @@ const gameBoard = (() => {
                 let marker = displayController.makeMove();
                 _gameBoard[index] = marker;
                 drawBoard();
+
+                // Checks for draw or victory
                 _gameOver(marker);
             }
         }
@@ -69,7 +120,8 @@ const gameBoard = (() => {
         }
     }
         
-    return { tiles, drawBoard }
+    return { tiles, drawBoard, _gameBoard }
 
-    }
-)()
+}
+
+

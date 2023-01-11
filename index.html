@@ -9,16 +9,38 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+    <div>
+        <h1>TIC TAC TOE </h1>
+    </div>
+    <div id="container" class="form">
+        <form action="#">
+
+            <div>
+                <label for="player1">Player 1</label>
+                <input type="text" id="player1" name="player1" maxlength="20">
+                <input type="radio" id="x1" name="marker1" value="X" checked>
+                <label for="X">X</label>
+                <input type="radio" id="o1" name="marker1" value="O">
+                <label for="O">O</label>
+            </div>
+
+            <div>
+                <label for="player2">Player 2</label>
+                <input type="text" id="player2" name="player2" maxlength="20">
+                <input type="radio" id="x2" name="marker2" value="X" disabled>
+                <label for="X">X</label>
+                <input type="radio" id="o2" name="marker2" value="O" checked disabled>
+                <label for="O">O</label>
+            </div>
+            
+            <div>
+                <input type="checkbox" id="computer" name="computer">
+                <label for="computer">Play against computer?</label>
+            </div>
+            <div>
+                <button>Start</button>
+            </div>
+        </form>
     </div>
 </body>
 </html>
