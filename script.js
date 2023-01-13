@@ -1,4 +1,7 @@
+
+// Controls the start menu and form
 const menu = (() => {
+
     const menuForm = document.getElementById('menu-form')
     const computerCheckbox = document.getElementById('computer');
     const player2Input = document.getElementById('player2');
@@ -47,7 +50,6 @@ const menu = (() => {
             menuForm.elements.player2.value : 'Player 2';
         const player2Marker = menuForm.elements.marker2.value;
 
-        // Hides the form
         menuForm.classList.add('hidden');
 
         displayController.startGame(
@@ -57,8 +59,14 @@ const menu = (() => {
     })
 })();
 
+
+// Controls the game
 const displayController = (() => {
     
+    const statusFirstChild = document.querySelector('.status > p:first-child');
+    const statusLastChild = document.querySelector('.status > p:last-child')
+
+
     let _player1;
     let _player2;
     let _currentPlayer;
@@ -86,6 +94,35 @@ const displayController = (() => {
 
             gameBoard.createBoard();
             _gameState = 'active';
+
+            updateStatusDiv(_gameState, _currentPlayer);
+        }
+    }
+
+    const updateStatusDiv = (state, player) => {
+
+        statusFirstChild.className = "";
+        statusLastChild.className = "";
+        statusLastChild.innerHTML = "";
+
+        if (state === 'draw') {
+            statusFirstChild.innerHTML = "It's a draw";
+            return
+        }
+        const name = player.getName();
+        const color = player.getColor();
+        
+        statusFirstChild.classList.add(color);
+
+        if (state === 'active') {
+
+            statusFirstChild.innerHTML = `${name}'s`
+            statusLastChild.innerHTML = 'turn...'
+
+        } else if (state === 'victory') {
+
+            statusFirstChild.innerHTML = `${name} wins!`
+
         }
     }
 
@@ -94,7 +131,13 @@ const displayController = (() => {
         _currentPlayer.tiles.push(index);
         let move = _currentPlayer;
         _currentPlayer = _currentPlayer == _player1 ? _player2 : _player1;
+
         _checkBoard(move)
+
+        if (_gameState === 'active') {
+            updateStatusDiv(_gameState, _currentPlayer)
+        }
+
         return move;
     }
 
@@ -106,34 +149,16 @@ const displayController = (() => {
 
         for (let i = 0; i < threeInARow.length; i++) {
             if (threeInARow[i].every(element => player.tiles.includes(element))) {
-                return _gameOver('victory', player);
+                _gameState = 'game-over';
+                return updateStatusDiv('victory', player);
             }
         }
 
         if (combinedTiles.length === 9) {
-            return _gameOver('draw');
+            _gameState = 'game-over';
+            return updateStatusDiv('draw');
         }
     }
-
-    const _gameOver = (state, player) => {
-
-        _gameState = 'game-over';
-
-        const container = document.getElementById('container');
-
-        const gameOverDiv = document.createElement('div');
-        gameOverDiv.className = 'game-over';
-
-        if (state === 'victory') {
-            gameOverDiv.innerHTML = `${player.getName()} wins!`
-        } else if (state === 'draw') {
-            gameOverDiv.innerHTML = "It's a draw!";
-        }
-        
-        container.appendChild(gameOverDiv);
-
-    }
-
 
     return {makeMove, startGame, getGameState};
 
