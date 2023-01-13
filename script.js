@@ -174,11 +174,21 @@ const gameBoard = (() => {
     // Returns true if the tile hasn't been used
     const isAvailable = (index) => { return (_gameBoard[index] === "") }
 
+    const _getColor = (marker) => {
+        if (marker === 'X') {
+            return 'green';
+        } else if (marker === 'O') {
+            return 'red';
+        }
+    }
 
     // Draws the board when called
     const drawBoard = () => {
         for (let i = 0; i < _gameBoard.length; i++) {
             tiles[i].innerHTML = _gameBoard[i];
+
+            // Sets color
+            tiles[i].classList.add(_getColor(_gameBoard[i]));
         }
     }
 
@@ -199,7 +209,7 @@ const gameBoard = (() => {
 
 const Player = (playerName, playerMarker, isComputer) => {
     const name = isComputer ? 'Computer' : playerName;
-    
+
     const getName = () => name;
     const getMarker = () => playerMarker;
     
