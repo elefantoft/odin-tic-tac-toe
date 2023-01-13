@@ -57,20 +57,27 @@ const menu = (() => {
             player2, player2Marker,
             computerCheckbox.checked);
     })
+
+    const restart = () => {
+        if (displayController.getGameState() == 'game-over') {
+            menuForm.reset();
+            menuForm.classList.remove('hidden');
+        }
+    }
+    return {restart}
 })();
 
 
 // Controls the game
 const displayController = (() => {
     
-    const statusFirstChild = document.querySelector('.status > p:first-child');
-    const statusLastChild = document.querySelector('.status > p:last-child')
-
+    const statusDiv = document.querySelector('.status');
+    const statusFirstChild = document.querySelector('.status > div > p:first-child');
+    const statusLastChild = document.querySelector('.status > div > p:last-child')
 
     let _player1;
     let _player2;
     let _currentPlayer;
-    let _move;
 
     let _gameState = 'menu';
 
@@ -87,6 +94,7 @@ const displayController = (() => {
             _player1 = Player(p1, p1Marker, false);
             _player2 = Player(p2, p2Marker, isComputer);
 
+            // Keeps track of each players current placements
             _player1.tiles = [];
             _player2.tiles = [];
 
@@ -99,6 +107,7 @@ const displayController = (() => {
         }
     }
 
+    // Shows who's turn it is, or if the game is over
     const updateStatusDiv = (state, player) => {
 
         statusFirstChild.className = "";
@@ -107,8 +116,10 @@ const displayController = (() => {
 
         if (state === 'draw') {
             statusFirstChild.innerHTML = "It's a draw";
+            restartButton();
             return
         }
+
         const name = player.getName();
         const color = player.getColor();
         
@@ -116,15 +127,15 @@ const displayController = (() => {
 
         if (state === 'active') {
 
-            statusFirstChild.innerHTML = `${name}'s`
+            statusFirstChild.innerHTML = `${name}'s&nbsp;`
             statusLastChild.innerHTML = 'turn...'
 
         } else if (state === 'victory') {
-
             statusFirstChild.innerHTML = `${name} wins!`
-
+            restartButton();
         }
     }
+
 
     // Passes the current player, and sets the other player as the next player
     const makeMove = (index) => {
@@ -141,10 +152,13 @@ const displayController = (() => {
         return move;
     }
 
+    // Checks the tiles for a win or a draw
     const _checkBoard = (player) => {
         
+        // An array to see if all the tiles are used
         let combinedTiles = [..._player1.tiles, ..._player2.tiles];
 
+        // Winning patterns
         const threeInARow = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
 
         for (let i = 0; i < threeInARow.length; i++) {
@@ -160,15 +174,41 @@ const displayController = (() => {
         }
     }
 
+    // Creates a restart button when the game is over
+    const restartButton = () => {
+        const restartButton = document.createElement('button');
+        restartButton.className = 'restart';
+        restartButton.innerHTML = 'Play again?';
+
+        restartButton.addEventListener('click', () => {
+
+            statusFirstChild.className = "";
+            statusLastChild.className = "";
+            statusFirstChild.innerHTML = "";
+            statusLastChild.innerHTML = "";
+
+            statusDiv.removeChild(restartButton);
+
+            gameBoard.restart();
+            menu.restart();
+
+            _gameState = 'menu';
+        })
+
+        statusDiv.appendChild(restartButton);
+    }
+
     return {makeMove, startGame, getGameState};
 
 })();
 
+// Creates and updates the gameboard
 const gameBoard = (() => {
 
+    // An array which represents the gameboard
     const _gameBoard = new Array(9).fill("");
-    const container = document.getElementById('container')
 
+    const container = document.getElementById('container')
     let tiles;
 
 
@@ -182,6 +222,7 @@ const gameBoard = (() => {
                 tile.className = 'tile';
                 container.appendChild(tile);
             }
+
             tiles = document.querySelectorAll('.tile');
             _setEventListener();
         }
@@ -199,12 +240,14 @@ const gameBoard = (() => {
     // Returns true if the tile hasn't been used
     const isAvailable = (index) => { return (_gameBoard[index] === "") }
 
-    // Draws the board when called
+
+    // Draws the markers when called
     const drawBoard = () => {
         for (let i = 0; i < _gameBoard.length; i++) {
             tiles[i].innerHTML = _gameBoard[i];
         }
     }
+
 
     // Updates the array index with the player's marker
     const _updateBoard = (index) => {
@@ -219,12 +262,23 @@ const gameBoard = (() => {
                 drawBoard();
             }
         }
-    } 
+    }
+
+    const restart = () => {
+        if (displayController.getGameState() == 'game-over') {
+            container.classList.remove('board');
+            container.classList.add('form');
+
+            tiles.forEach( element => container.removeChild(element));
+            _gameBoard.fill("")
+        }
+    }
         
-    return {createBoard};
+    return {createBoard, restart};
 
 })();
 
+// Factory function to create new players
 const Player = (playerName, playerMarker, isComputer) => {
     const name = isComputer ? 'Computer' : playerName;
 
