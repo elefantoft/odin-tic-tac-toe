@@ -57,10 +57,9 @@ form > div > button {
 .board > div {
     border: 2px solid black;
     font-size: 10rem;
-    
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
+    padding-top: 20px;
 };
 
 .hidden {
